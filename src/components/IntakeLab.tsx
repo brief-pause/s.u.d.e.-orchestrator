@@ -50,35 +50,35 @@ export default function IntakeLab({ onProjectCreated, activeProjectId }: IntakeL
   };
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center p-8">
-      {/* Hero Input */}
+    <div className="p-5">
+      {/* URL Input */}
       <motion.div
-        className="w-full max-w-2xl"
-        initial={{ opacity: 0, y: 30 }}
+        className="mb-5"
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.4 }}
       >
-        <h2 className="mb-2 text-center text-3xl font-bold tracking-tight text-foreground">
+        <h2 className="mb-1 text-lg font-bold tracking-tight text-foreground">
           Target Acquisition
         </h2>
-        <p className="mb-8 text-center text-sm text-muted-foreground">
+        <p className="mb-3 text-xs text-muted-foreground">
           Enter a URL or Figma link to begin synthetic user discovery
         </p>
 
         <div className="cyber-glow cyber-border relative flex items-center rounded-lg bg-card p-1">
-          <Search className="ml-3 h-5 w-5 text-muted-foreground" />
+          <Search className="ml-3 h-4 w-4 text-muted-foreground" />
           <input
             type="url"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
             placeholder="https://target-application.com"
-            className="flex-1 bg-transparent px-3 py-3 font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+            className="flex-1 bg-transparent px-3 py-2.5 font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
           />
           <motion.button
             onClick={handleSubmit}
             disabled={submitting || !url.trim()}
-            className="flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 font-mono text-xs font-semibold uppercase tracking-wider text-primary-foreground disabled:opacity-40"
+            className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 font-mono text-xs font-semibold uppercase tracking-wider text-primary-foreground disabled:opacity-40"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -88,12 +88,12 @@ export default function IntakeLab({ onProjectCreated, activeProjectId }: IntakeL
         </div>
       </motion.div>
 
-      {/* Persona Cards */}
+      {/* Persona Cards - compact row */}
       <motion.div
-        className="mt-12 grid w-full max-w-4xl grid-cols-1 gap-5 md:grid-cols-3"
+        className="grid grid-cols-3 gap-3"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.3 }}
+        transition={{ delay: 0.2 }}
       >
         {archetypes.map((a) => (
           <PersonaCard

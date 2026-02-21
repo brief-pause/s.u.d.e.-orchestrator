@@ -3,7 +3,8 @@ import { useProjects, useActiveProject, useSimulationEvents } from '@/hooks/useS
 import AppSidebar from '@/components/AppSidebar';
 import DashboardHeader from '@/components/DashboardHeader';
 import IntakeLab from '@/components/IntakeLab';
-import SimulationTheater from '@/components/SimulationTheater';
+import SyntheticStream from '@/components/SyntheticStream';
+import BehavioralAnalytics from '@/components/BehavioralAnalytics';
 import ExecutionTerminal from '@/components/ExecutionTerminal';
 import ScanningOverlay from '@/components/ScanningOverlay';
 
@@ -13,9 +14,7 @@ const Index = () => {
   const activeProject = projects.find((p) => p.id === activeProjectId) || null;
   const { events } = useSimulationEvents(activeProjectId);
   const [scanning, setScanning] = useState(false);
-  const [showExecution, setShowExecution] = useState(false);
 
-  // Show scanning overlay when project transitions to scanning
   useEffect(() => {
     if (activeProject?.status === 'scanning') {
       setScanning(true);
@@ -24,49 +23,71 @@ const Index = () => {
     }
   }, [activeProject?.status]);
 
-  // Auto-show execution terminal on completed
-  useEffect(() => {
-    if (activeProject?.status === 'completed') {
-      setShowExecution(true);
-    }
-  }, [activeProject?.status]);
-
   const handleProjectCreated = (id: string) => {
     setActive(id);
   };
 
-  const isSimulating = activeProject && (activeProject.status === 'simulating' || activeProject.status === 'completed');
-
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-background">
-      <AppSidebar
-        projects={projects}
-        activeProjectId={activeProjectId}
-        onSelectProject={(id) => setActive(id)}
-        onNewProject={() => setActive(null)}
-      />
+    <div className="flex h-screen w-full flex-col overflow-hidden bg-background">
+      <DashboardHeader project={activeProject} />
 
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <DashboardHeader project={activeProject} />
+      <div className="flex flex-1 overflow-hidden">
+        {/* LEFT COLUMN: Sidebar + Persona Archetypes */}
+        <AppSidebar
+          projects={projects}
+          activeProjectId={activeProjectId}
+          onSelectProject={(id) => setActive(id)}
+          onNewProject={() => setActive(null)}
+        />
 
-        {isSimulating ? (
-          <SimulationTheater
-            events={events}
-            projectName={activeProject?.name || activeProject?.url || 'Unknown'}
-          />
-        ) : (
-          <IntakeLab
-            onProjectCreated={handleProjectCreated}
-            activeProjectId={activeProjectId}
-          />
-        )}
+        {/* CENTER COLUMN: Intake Lab + Digital Twin Map */}
+        <div className="flex flex-1 flex-col overflow-y-auto border-r border-border">
+          {/* URL Intake */}
+          <div className="shrink-0 border-b border-border">
+            <IntakeLab
+              onProjectCreated={handleProjectCreated}
+              activeProjectId={activeProjectId}
+            />
+          </div>
+
+          {/* Digital Twin Map / Execution Terminal */}
+          <div className="flex-1 min-h-0 p-4">
+            <div className="mb-2 font-mono text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              Execution Terminal
+            </div>
+            <div className="h-[calc(100%-20px)]">
+              <ExecutionTerminal
+                projectName={activeProject?.name || 'Project'}
+                status={activeProject?.status || null}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN: Simulation Theater + Analytics */}
+        <div className="flex w-[420px] shrink-0 flex-col overflow-y-auto">
+          {/* Synthetic Stream */}
+          <div className="flex-1 min-h-0 border-b border-border p-4">
+            <div className="mb-2 flex items-center gap-3">
+              <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+              <span className="font-mono text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                Simulation Theater — {activeProject?.name || 'No Project'}
+              </span>
+            </div>
+            <div className="h-[calc(100%-28px)]">
+              <SyntheticStream events={events} />
+            </div>
+          </div>
+
+          {/* Behavioral Analytics */}
+          <div className="shrink-0 p-4">
+            <div className="mb-2 font-mono text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+              Behavioral Analytics
+            </div>
+            <BehavioralAnalytics events={events} />
+          </div>
+        </div>
       </div>
-
-      <ExecutionTerminal
-        visible={showExecution}
-        onClose={() => setShowExecution(false)}
-        projectName={activeProject?.name || 'Project'}
-      />
 
       <ScanningOverlay visible={scanning} />
     </div>
