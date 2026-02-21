@@ -37,13 +37,24 @@ export default function IntakeLab({ onProjectCreated, activeProjectId }: IntakeL
   const handleSubmit = async () => {
     if (!url.trim()) return;
     setSubmitting(true);
-    const { data } = await supabase
-      .from('discovery_projects')
-      .insert({ url: url.trim(), name: new URL(url.trim()).hostname, status: 'scanning' })
-      .select()
-      .single();
-    if (data) {
-      onProjectCreated(data.id);
+    try {
+      // 1. Insert the project row
+      const { data } = await supabase
+        .from('discovery_projects')
+        .insert({ url: url.trim(), name: new URL(url.trim()).hostname, status: 'scanning' })
+        .select()
+        .single();
+
+      if (data) {
+        onProjectCreated(data.id);
+
+        // 2. Invoke the trigger-sentinel edge function
+        await supabase.functions.invoke('trigger-sentinel', {
+          body: { project_id: data.id },
+        });
+      }
+    } catch (err) {
+      console.error('Scan failed:', err);
     }
     setUrl('');
     setSubmitting(false);
