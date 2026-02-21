@@ -1,73 +1,63 @@
-# Welcome to your Lovable project
+# S.U.D.E. — Synthetic User Discovery Engine
 
-## Project info
+> AI-powered behavioral simulation that stress-tests your product through synthetic personas before real users ever touch it.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## The Problem
 
-## How can I edit this code?
+Traditional user testing is slow, expensive, and biased by small sample sizes. S.U.D.E. replaces this with **synthetic persona simulations** — AI agents that navigate your product, surface friction points, and generate sentiment analysis reports automatically.
 
-There are several ways of editing your application.
+## Discovery-to-Deployment Flow
 
-**Use Lovable**
+```
+┌─────────────┐     ┌──────────────────┐     ┌─────────────────┐     ┌──────────────────┐
+│  Intake Lab  │ ──▶ │  Trigger Sentinel │ ──▶ │  Dust.tt AI Sim  │ ──▶ │ Sentinel Callback │
+│  (Target URL │     │  (Edge Function)  │     │  (Agentic Layer) │     │  (Save + Publish) │
+│  + Personas) │     └──────────────────┘     └─────────────────┘     └──────────────────┘
+└─────────────┘                                                              │
+                                                                             ▼
+                                                                   ┌──────────────────┐
+                                                                   │  GitHub Report    │
+                                                                   │  (Markdown)       │
+                                                                   └──────────────────┘
+```
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+1. **Intake Lab** — Enter a target URL and configure synthetic persona traits.
+2. **Trigger Sentinel** — A backend function packages the personas and fires a webhook to Dust.tt.
+3. **AI Simulation** — Dust.tt agents crawl the target, simulating real user behavior.
+4. **Sentinel Callback** — Results are saved to the database and a Markdown report is committed to GitHub.
 
-Changes made via Lovable will be committed automatically to this repo.
+## Tech Stack
 
-**Use your preferred IDE**
+| Layer | Technology | Role |
+|-------|-----------|------|
+| **Frontend** | React + Vite + Tailwind CSS | Dashboard, Intake Lab, Simulation Theater |
+| **Backend** | Lovable Cloud (PostgreSQL + Edge Functions) | Data persistence, orchestration |
+| **AI Layer** | Dust.tt | Agentic simulation via webhook triggers |
+| **Publishing** | GitHub API | Auto-commit Markdown reports to repo |
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Setup
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Secrets (managed via Lovable Cloud)
 
-Follow these steps:
+All private credentials are stored as **Lovable Cloud Secrets** and injected into backend functions at runtime. No `.env` files are used.
+
+| Secret | Purpose |
+|--------|---------|
+| `GITHUB_TOKEN` | Authenticates with GitHub API for report commits |
+| `GITHUB_OWNER` | GitHub repository owner |
+| `GITHUB_REPO` | GitHub repository name |
+
+The Dust.tt webhook URL is currently hardcoded in the `trigger-sentinel` function.
+
+### Local Development
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
 git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
 npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Documentation
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+See [TECHNICAL_DOCS.md](./TECHNICAL_DOCS.md) for full API documentation and payload schemas.
